@@ -51,6 +51,7 @@ function svg2ttf(svgString, options) {
     glyph.d = svgGlyph.d;
     glyph.height = svgGlyph.height || font.height;
     glyph.width = svgGlyph.width || font.width;
+    glyph.transform = svgGlyph.transform || null;
     glyphs.push(glyph);
   });
 
@@ -103,8 +104,11 @@ function svg2ttf(svgString, options) {
     //SVG transformations
     var svgPath = new SvgPath(glyph.d)
       .abs()
-      .unshort()
-      .iterate(svg.cubicToQuad);
+      .unshort();
+    if (glyph.transform) {
+      svgPath.transform(glyph.transform);
+    };
+    svgPath.iterate(svg.cubicToQuad);
     var sfntContours = svg.toSfntCoutours(svgPath);
 
     // Add contours to SFNT font
